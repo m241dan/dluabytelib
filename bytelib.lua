@@ -1,4 +1,6 @@
-function convertByteToBinaryTable( decimal )
+local bl = {}
+
+function bl.convertByteToBinaryTable( decimal )
    local binary_tab = {}
    local maxbit = 128
 
@@ -16,23 +18,39 @@ function convertByteToBinaryTable( decimal )
    return binary_tab
 end
 
-function shiftRightOnByteBinaryTable( binary_table, shift )
+-- "right" wrapper for the shift function
+function bl.circularShiftRight( bin, shift_amount )
+   return shift( bin, shift_amount, true )
+end
+-- "left" wrapper for the shift function
+function bl.circularShiftLeft( bin, shift_amount )
+   return shift( bin, shift_amount, false )
+end
+
+local function shift( bin, shift_amount, right_shift )
    local shifted_tab = {}
 
-   for i, v in ipairs( binary_table ) do
-      shifted_tab[( i + shift ) % 8] = v
+   --some quick and dirty type checking
+   bin_type = type( bin )
+   if( bin_type == "number" ) then
+      bin = bl.convertByteToBinaryTable( bin )
+   elseif( bin_type ~= "table" ) then
+      error( "expecting either a byte table or byte sized integer, get " .. bin_type .. " instead." )
    end
 
+   for i, v in ipairs( bin ) do
+      if( right_or_left ) then
+         shifted_tab[( i + shift ) % 8] = v
+      else
+         shifted_tab[math.abs( i - shift ) % 8] = v
+      end
+   end
+
+    --handle some awkward mod action here
    shifted_tab[8] = shifted_tab[0]
    shifted_tab[0] = nil
 
-   print( table.concat( shifted_tab, " " ) )
    return shifted_tab
 end
 
-local var = "a"
-
-print( var:byte() )
-print( table.concat( convertByteToBinaryTable( var:byte() ), " " ) )
-print( table.concat( shiftRightOnByteBinaryTable( convertByteToBinaryTable( var:byte() ), 5 ), " " ) )
-
+return bl
