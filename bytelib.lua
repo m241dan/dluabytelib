@@ -1,6 +1,6 @@
 local bl = {}
 
-function bl.convertByteToBinaryTable( decimal )
+function bl.convertByteToBinary( decimal )
    local binary_tab = {}
    local maxbit = 128
 
@@ -18,31 +18,22 @@ function bl.convertByteToBinaryTable( decimal )
    return binary_tab
 end
 
--- "right" wrapper for the shift function
-function bl.circularShiftRight( bin, shift_amount )
-   return shift( bin, shift_amount, true )
-end
--- "left" wrapper for the shift function
-function bl.circularShiftLeft( bin, shift_amount )
-   return shift( bin, shift_amount, false )
-end
-
 local function shift( bin, shift_amount, right_shift )
    local shifted_tab = {}
 
    --some quick and dirty type checking
    bin_type = type( bin )
    if( bin_type == "number" ) then
-      bin = bl.convertByteToBinaryTable( bin )
+      bin = bl.convertByteToBinary( bin )
    elseif( bin_type ~= "table" ) then
       error( "expecting either a byte table or byte sized integer, get " .. bin_type .. " instead." )
    end
 
    for i, v in ipairs( bin ) do
       if( right_or_left ) then
-         shifted_tab[( i + shift ) % 8] = v
+         shifted_tab[( i + shift_amount ) % 8] = v
       else
-         shifted_tab[math.abs( i - shift ) % 8] = v
+         shifted_tab[math.abs( i - shift_amount ) % 8] = v
       end
    end
 
@@ -51,6 +42,18 @@ local function shift( bin, shift_amount, right_shift )
    shifted_tab[0] = nil
 
    return shifted_tab
+end
+
+-- "right" wrapper for the shift function
+function bl.circularShiftRight( bin, shift_amount )
+   if( shift_amount < 1 or shift_amount > 7 ) then
+      error( "Bad shift amount entered" )
+   end
+   return shift( bin, shift_amount, true )
+end
+-- "left" wrapper for the shift function
+function bl.circularShiftLeft( bin, shift_amount )
+   return shift( bin, shift_amount, false )
 end
 
 return bl
