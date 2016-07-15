@@ -1,5 +1,4 @@
 -- A quick and dirty test for the bytelib
-
 bl = require( "bytelib" )
 
 local var = "a"

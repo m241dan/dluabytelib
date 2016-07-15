@@ -33,16 +33,15 @@ local function shift( bin, shift_amount, right_shift )
       if( right_shift ) then
          shifted_tab[( i + shift_amount ) % 8] = v
       else
-         shifted_tab[math.abs( i - shift_amount )] = v
+
+         shifted_tab[( i - shift_amount ) % 8] = v
       end
    end
 
     --handle some awkward mod action here
-   if( right_shift ) then
-      shifted_tab[8] = shifted_tab[0]
-      shifted_tab[0] = nil
-   end
-   print( shifted_tab[5] )
+   shifted_tab[8] = shifted_tab[0]
+   shifted_tab[0] = nil
+
    return shifted_tab
 end
 
