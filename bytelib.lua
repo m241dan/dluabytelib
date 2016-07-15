@@ -4,9 +4,8 @@ local conversion_tab = { 128, 64, 32, 16, 8, 4, 2, 1 }
 
 function bl.convertByteToBinary( decimal )
    local binary_tab = {}
-   local maxbit = 128
 
-   for i, v in ipairs( conversation_tab ) do
+   for i, v in ipairs( conversion_tab ) do
       if( decimal - conversion_tab[i] >= 0 ) then
          binary_tab[i] = 1
          decimal = decimal - conversion_tab[i]
@@ -14,24 +13,20 @@ function bl.convertByteToBinary( decimal )
          binary_tab[i] = 0
       end
    end
---[[
-   repeat
-      if( decimal - maxbit >= 0 ) then
-         binary_tab[#binary_tab+1] = "1"
-         decimal = decimal - maxbit
-         maxbit = maxbit / 2
-      else
-         binary_tab[#binary_tab+1] = "0"
-         maxbit = maxbit / 2
-      end
-   until maxbit == .5
---]]
+
    return binary_tab
 end
 
 function bl.convertBinaryToByte( binary )
-   local byte
-   
+   local decimal = 0
+
+   for i, v in ipairs( binary ) do
+      if( v == 1 ) then
+         decimal = decimal + conversion_tab[i]
+      end
+   end
+
+   return decimal
 end
 
 local function shift( bin, shift_amount, right_shift )
@@ -58,6 +53,9 @@ local function shift( bin, shift_amount, right_shift )
    shifted_tab[8] = shifted_tab[0]
    shifted_tab[0] = nil
 
+   if( bin_type == "number" ) then
+      return bl.convertBinaryToByte( shifted_tab )
+   end
    return shifted_tab
 end
 
@@ -70,6 +68,9 @@ function bl.circularShiftRight( bin, shift_amount )
 end
 -- "left" wrapper for the shift function
 function bl.circularShiftLeft( bin, shift_amount )
+   if( shift_amount < 1 or shift_amount > 7 ) then
+      error( "Bad shift amount entered" )
+   end
    return shift( bin, shift_amount, false )
 end
 
