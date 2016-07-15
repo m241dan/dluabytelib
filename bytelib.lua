@@ -30,7 +30,7 @@ local function shift( bin, shift_amount, right_shift )
    end
 
    for i, v in ipairs( bin ) do
-      if( right_or_left ) then
+      if( right_shift ) then
          shifted_tab[( i + shift_amount ) % 8] = v
       else
          shifted_tab[math.abs( i - shift_amount ) % 8] = v
