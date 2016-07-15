@@ -1,9 +1,20 @@
 local bl = {}
 
+local conversion_tab = { 128, 64, 32, 16, 8, 4, 2, 1 }
+
 function bl.convertByteToBinary( decimal )
    local binary_tab = {}
    local maxbit = 128
 
+   for i, v in ipairs( conversation_tab ) do
+      if( decimal - conversion_tab[i] >= 0 ) then
+         binary_tab[i] = 1
+         decimal = decimal - conversion_tab[i]
+      else
+         binary_tab[i] = 0
+      end
+   end
+--[[
    repeat
       if( decimal - maxbit >= 0 ) then
          binary_tab[#binary_tab+1] = "1"
@@ -14,8 +25,13 @@ function bl.convertByteToBinary( decimal )
          maxbit = maxbit / 2
       end
    until maxbit == .5
-
+--]]
    return binary_tab
+end
+
+function bl.convertBinaryToByte( binary )
+   local byte
+   
 end
 
 local function shift( bin, shift_amount, right_shift )
